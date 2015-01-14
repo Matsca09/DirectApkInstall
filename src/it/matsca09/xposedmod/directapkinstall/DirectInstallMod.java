@@ -3,6 +3,7 @@ package it.matsca09.xposedmod.directapkinstall;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Build;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -11,12 +12,12 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class DirectInstallMod implements IXposedHookLoadPackage{
 	
-
 	@Override
 	public void handleLoadPackage(LoadPackageParam lpparam) throws Throwable {
 		if(!lpparam.packageName.equals("com.android.packageinstaller")){
 			return;
 		}
+		
 		
 		XposedHelpers.findAndHookMethod("com.android.packageinstaller.PackageInstallerActivity", lpparam.classLoader, "onCreate", "android.os.Bundle", new XC_MethodHook() {
             @Override
@@ -49,6 +50,17 @@ public class DirectInstallMod implements IXposedHookLoadPackage{
 			
 			@Override
 			protected Object replaceHookedMethod(MethodHookParam param)	throws Throwable {
+				/*
+				 * Avoid showing "Install blocked" popup alert.
+				 * DLG_UNKNOWN_APPS value is 1 on Android >= 4.4, 2 in older releases.
+				 */
+				int DLG_UNKNOWN_APPS = Build.VERSION.SDK_INT >= 19 ? 1 : 2;
+				if((Integer)param.args[0] != DLG_UNKNOWN_APPS){
+					XposedHelpers.callMethod(param.thisObject, "removeDialog", (Integer)param.args[0]);
+					XposedHelpers.callMethod(param.thisObject, "showDialog", (Integer)param.args[0]);
+				}else{
+					
+				}
 				return null;
 			}
 		});
