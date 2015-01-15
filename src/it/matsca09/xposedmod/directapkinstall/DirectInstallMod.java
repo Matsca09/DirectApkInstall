@@ -22,8 +22,7 @@ public class DirectInstallMod implements IXposedHookLoadPackage{
 		XposedHelpers.findAndHookMethod("com.android.packageinstaller.PackageInstallerActivity", lpparam.classLoader, "onCreate", "android.os.Bundle", new XC_MethodHook() {
             @Override
 			protected void afterHookedMethod(final MethodHookParam param) throws Throwable {
-            	boolean canInstExternalApps = (Boolean)XposedHelpers.callMethod(param.thisObject, "isInstallingUnknownAppsAllowed");
-            	if(!canInstExternalApps){
+            	if(!(Boolean)XposedHelpers.callMethod(param.thisObject, "isInstallingUnknownAppsAllowed")){
             		AlertDialog.Builder builder = new AlertDialog.Builder((Context) param.thisObject);
             	    builder.setTitle("Package installation");
             	    //Alert taken from Android settings
@@ -58,8 +57,6 @@ public class DirectInstallMod implements IXposedHookLoadPackage{
 				if((Integer)param.args[0] != DLG_UNKNOWN_APPS){
 					XposedHelpers.callMethod(param.thisObject, "removeDialog", (Integer)param.args[0]);
 					XposedHelpers.callMethod(param.thisObject, "showDialog", (Integer)param.args[0]);
-				}else{
-					
 				}
 				return null;
 			}
