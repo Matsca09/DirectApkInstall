@@ -7,6 +7,7 @@ import android.os.Build;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
@@ -51,9 +52,9 @@ public class DirectInstallMod implements IXposedHookLoadPackage{
 			protected Object replaceHookedMethod(MethodHookParam param)	throws Throwable {
 				/*
 				 * Avoid showing "Install blocked" popup alert.
-				 * DLG_UNKNOWN_APPS value is 1 on Android >= 4.4, 2 in older releases.
+				 * DLG_UNKNOWN_APPS value is 1 on Android >= 4.3 (JELLY_BEAN_MR1), 2 in older releases.
 				 */
-				int DLG_UNKNOWN_APPS = Build.VERSION.SDK_INT >= 19 ? 1 : 2;
+				int DLG_UNKNOWN_APPS = Build.VERSION.SDK_INT >= 17 ? 1 : 2;
 				if((Integer)param.args[0] != DLG_UNKNOWN_APPS){
 					XposedHelpers.callMethod(param.thisObject, "removeDialog", (Integer)param.args[0]);
 					XposedHelpers.callMethod(param.thisObject, "showDialog", (Integer)param.args[0]);
