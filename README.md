@@ -1,3 +1,8 @@
+
+# This project is no longer maintained   
+The repo will be archived; if you want to get in touch feel free to contact me on XDA.
+
+
 # DirectAPKInstall
 
 This is the source code of my Xposed module.
